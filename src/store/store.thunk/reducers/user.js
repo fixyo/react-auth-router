@@ -1,8 +1,8 @@
 import { GET_USER_INFO } from '../actionTypes'
 
 const defaultState = {
-  token: '',
-  role: ''
+  token: 'token',
+  authorities: ['user']
 }
 
 export default function user(state = defaultState, action) {
@@ -14,5 +14,4 @@ export default function user(state = defaultState, action) {
     default:
       return state
   }
-
 }

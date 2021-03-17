@@ -5,6 +5,9 @@ export default class NormalLayout extends Component {
     return (
       <div>
         NORMAL_LAYOUT
+        {
+          this.props.children
+        }
       </div>
     )
   }

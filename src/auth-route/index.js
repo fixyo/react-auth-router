@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 // import map from 'lodash/map'
 import isNil from 'lodash/isNil'
-import { Switch, Route, Redirect} from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom'
 import omitProperities from '../util/omitProperities'
 import checkPermission from '../util/checkPermission'
 import DefaultLayout from './defaultLayout'
@@ -18,7 +18,7 @@ const propTypes = {
     PropTypes.shape({
       path: PropTypes.string,
       redirect: PropTypes.string,
-      component: PropTypes.func
+      component: PropTypes.func | PropTypes.object
     })
   ),
   normalLayout: PropTypes.func,
@@ -26,7 +26,7 @@ const propTypes = {
     PropTypes.shape({
       path: PropTypes.string,
       permissions: PropTypes.arrayOf(PropTypes.string),
-      component: PropTypes.func,
+      component: PropTypes.func | PropTypes.object,
       redirect: PropTypes.string,
       unauthorized: PropTypes.func,
     })
@@ -45,6 +45,13 @@ const defaultProps = {
 }
 
 class AuthRoute extends Component {
+  constructor(props) {
+    super(props)
+    // const {token} = props
+    console.log(this.props, 'props')
+    
+  }
+
   renderRedirectRoute = (route) => (
     <Route
       key={route.path}
@@ -62,16 +69,21 @@ class AuthRoute extends Component {
       unauthorized: Unauthorized
     } = route
 
-    console.log(Unauthorized, 'x2')
+    if (!this.props.token) {
+      return (
+        <Route
+          key={route.path}
+          {...omitProperities(route)}
+          render={() => <Redirect to={'/login'} />}
+        />
+      )
+    }
 
     const hasPermission = checkPermission(authorities, permissions)
-
-    console.log(hasPermission, 'hasPermission')
 
     // not authorized and has a fallback unathorized component 
     if (!hasPermission) {
       if (route.unauthorized) {
-        console.log('xxx')
         return (
           <Route
             key={path}
@@ -142,23 +154,21 @@ class AuthRoute extends Component {
     const { normalRoutes, authorizedRoutes } = this.props
     return (
       
-        <Switch>
-          {
-            normalRoutes.map(route => {
-              return this.renderUnAuthorizedRoute(route)
-            })
-          }
-          {
-            authorizedRoutes.map(route => {
-              return this.renderAuthorizedRoute(route)
-            })
-          }
-          {
-            this.renderNotFound()
-          }
-        </Switch>
-     
-
+      <Switch>
+        {
+          normalRoutes.map(route => {
+            return this.renderUnAuthorizedRoute(route)
+          })
+        }
+        {
+          authorizedRoutes.map(route => {
+            return this.renderAuthorizedRoute(route)
+          })
+        }
+        {
+          this.renderNotFound()
+        }
+      </Switch>
     )
   }
 }

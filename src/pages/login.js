@@ -1,7 +1,18 @@
 import React, { Component } from 'react'
+import { Redirect } from 'react-router-dom'
+import { connect } from 'react-redux'
 
-export default class login extends Component {
+class Login extends Component {
+  constructor(props) {
+    super(props)
+    console.log(this.props, 'login')
+  }
+
   render() {
+    const { user } = this.props 
+    if (user.token) {
+      return <Redirect to="/" key={'/dashboard'}/>
+    }
     return (
       <form onSubmit={e => this.handleSubmit()}>
         <div>
@@ -20,3 +31,13 @@ export default class login extends Component {
     )
   }
 }
+
+const mapStateToProps = (state) => (
+  {
+    user: state.user,
+  }
+)
+
+export default connect(mapStateToProps)(Login);
+// export default connect(mapStateToProps)(Router);
+// export default Login

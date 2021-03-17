@@ -63,6 +63,8 @@ const normalRoutes = [
 
 const Router = props => (
   <AuthRouter
+    {...props}
+    token={props.user.token}
     authorities={props.user.authorities}
     authorizedRoutes={authorizedRoutes}
     authorizedLayout={BasicLayout}
